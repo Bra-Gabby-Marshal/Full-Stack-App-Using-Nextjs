@@ -1,24 +1,40 @@
-.container{
-    width: 45px;
-    height: 28px;
-    border: 1.5px solid #53c28b70;
-    border-radius: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2px;
-    position: relative;
-    cursor: pointer;
+.container {
+  width: 50px;          /* slightly wider to give space */
+  height: 28px;
+  border: 1.5px solid #53c28b70;
+  border-radius: 30px;
+  position: relative;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;       /* spacing inside the container */
 }
 
-.icon{
-    font-size: 12px;
+.moon {
+  font-size: 12px;
 }
 
-.ball{
-    width: 15px;
-    height: 15px;
-    background-color: #53c28b;
-    border-radius: 50%;
-    position: absolute;
+.sun {
+  font-size: 12px;
+}
+
+.ball {
+  width: 16px;
+  height: 16px;
+  background-color: #53c28b;
+  border-radius: 50%;
+  position: absolute;
+  top: 6px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.light {
+  left: 26px;   /* moves to the right over the sun */
+}
+
+.dark {
+  left: 2px;    /* stays on the left over the moon */
 }
