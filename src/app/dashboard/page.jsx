@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import styles from "./page.module.css";
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const fetcher = async (url) => {
   const res = await fetch(url);
@@ -15,45 +17,37 @@ const fetcher = async (url) => {
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const { data: session, status } = useSession();
 
-  // ✅ Explicit authentication flag
-  const isAuthenticated = status === "authenticated";
-
   const { data, error, isLoading } = useSWR(
-    isAuthenticated ? "/api/dashboard" : null,
+    session ? "/api/dashboard" : null,
     fetcher
   );
 
-  // 1️⃣ Session still resolving
+  // ✅ REDIRECT AFTER RENDER
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/dashboard/login");
+    }
+  }, [status, router]);
+
   if (status === "loading") {
     return <div className={styles.loading}>Checking session...</div>;
   }
 
-  // 2️⃣ User NOT authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className={styles.error}>
-        Access denied. Please log in.
-      </div>
-    );
+  if (!session) {
+    return null; // redirect handled in useEffect
   }
 
-  // 3️⃣ Authenticated but dashboard data loading
   if (isLoading) {
     return <div className={styles.loading}>Loading dashboard...</div>;
   }
 
-  // 4️⃣ API error
   if (error) {
-    return (
-      <div className={styles.error}>
-        Failed to load dashboard
-      </div>
-    );
+    return <div className={styles.error}>Failed to load dashboard</div>;
   }
 
-  // 5️⃣ Authenticated + data ready
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
@@ -63,7 +57,7 @@ export default function Dashboard() {
       <div className={styles.stats}>
         <div className={styles.statItem}>
           <h2 className={styles.statTitle}>Users</h2>
-          <p>{data.usersCount}</p>
+          <p>{data?.usersCount}</p>
         </div>
       </div>
     </div>
